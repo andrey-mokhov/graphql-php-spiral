@@ -1,0 +1,23 @@
+{
+    "name": "andi/graphql-php-spiral",
+    "description": "GraphQL library for Spiral Framework",
+    "type": "library",
+    "require": {
+        "php": "^8.2",
+        "andi/graphql-php": "*"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Andrey N. Mokhov",
+            "email": "github@mokhov.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "Andi\\SpiralGraphQL\\": "src/"
+        }
+    }
+}
