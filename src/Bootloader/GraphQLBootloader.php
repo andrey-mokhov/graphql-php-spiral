@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace Andi\GraphQL\Spiral\Bootloader;
 
+use Andi\GraphQL\ArgumentResolver\ArgumentResolver;
+use Andi\GraphQL\ArgumentResolver\ArgumentResolverInterface;
+use Andi\GraphQL\InputObjectFieldResolver\InputObjectFieldResolver;
+use Andi\GraphQL\InputObjectFieldResolver\InputObjectFieldResolverInterface;
+use Andi\GraphQL\ObjectFieldResolver\ObjectFieldResolver;
+use Andi\GraphQL\ObjectFieldResolver\ObjectFieldResolverInterface;
 use Andi\GraphQL\Spiral\Config\GraphQLConfig;
 use Andi\GraphQL\Spiral\Listener\MutationFieldListener;
 use Andi\GraphQL\Spiral\Listener\QueryFieldListener;
@@ -31,15 +37,23 @@ use Spiral\Tokenizer\TokenizerListenerRegistryInterface;
 final class GraphQLBootloader extends Bootloader
 {
     protected const SINGLETONS = [
-        StandardServer::class        => [self::class, 'makeStandardServer'],
-        ServerConfig::class          => [self::class, 'makeServerConfig'],
-        Schema::class                => [self::class, 'makeSchema'],
-        SchemaConfig::class          => [self::class, 'makeSchemaConfig'],
+        StandardServer::class        => [self::class, 'buildStandardServer'],
+        ServerConfig::class          => [self::class, 'buildServerConfig'],
+        Schema::class                => [self::class, 'buildSchema'],
+        SchemaConfig::class          => [self::class, 'buildSchemaConfig'],
 
         TypeRegistryInterface::class => TypeRegistry::class,
-        TypeResolverInterface::class => TypeResolver::class,
-        TypeRegistry::class          => [self::class, 'makeTypeRegistry'],
-        TypeResolver::class          => [self::class, 'makeTypeResolver'],
+        TypeRegistry::class          => [self::class, 'buildTypeRegistry'],
+
+        TypeResolverInterface::class             => TypeResolver::class,
+        ObjectFieldResolverInterface::class      => ObjectFieldResolver::class,
+        InputObjectFieldResolverInterface::class => InputObjectFieldResolver::class,
+        ArgumentResolverInterface::class         => ArgumentResolver::class,
+
+        TypeResolver::class             => [self::class, 'buildTypeResolver'],
+        ObjectFieldResolver::class      => [self::class, 'buildObjectFieldResolver'],
+        InputObjectFieldResolver::class => [self::class, 'buildInputObjectFieldResolver'],
+        ArgumentResolver::class         => [self::class, 'buildArgumentResolver'],
     ];
 
     protected const DEPENDENCIES = [
@@ -113,12 +127,12 @@ final class GraphQLBootloader extends Bootloader
         $typeRegistry->register($queryType, $class);
     }
 
-    private function makeStandardServer(ServerConfig $config): StandardServer
+    private function buildStandardServer(ServerConfig $config): StandardServer
     {
         return new StandardServer($config);
     }
 
-    private function makeServerConfig(Schema $schema): ServerConfig
+    private function buildServerConfig(Schema $schema): ServerConfig
     {
         $config = (new ServerConfig())
             ->setSchema($schema);
@@ -128,12 +142,12 @@ final class GraphQLBootloader extends Bootloader
         return $config;
     }
 
-    private function makeSchema(SchemaConfig $config): Schema
+    private function buildSchema(SchemaConfig $config): Schema
     {
         return new Schema($config);
     }
 
-    private function makeSchemaConfig(TypeRegistryInterface $typeRegistry): SchemaConfig
+    private function buildSchemaConfig(TypeRegistryInterface $typeRegistry): SchemaConfig
     {
         $schemaConfig = new SchemaConfig();
         $schemaConfig->setTypeLoader($typeRegistry);
@@ -148,24 +162,60 @@ final class GraphQLBootloader extends Bootloader
         return $schemaConfig;
     }
 
-    private function makeTypeRegistry(): TypeRegistry
+    private function buildTypeRegistry(): TypeRegistry
     {
         return new TypeRegistry();
     }
 
-    private function makeTypeResolver(
+    private function buildTypeResolver(
         ContainerInterface $container,
         GraphQLConfig $config,
     ): TypeResolver {
         $typeResolver = new TypeResolver();
 
-        foreach ($config->getTypeResolverMiddlewares() as $name) {
-            $priority = (new ReflectionClass($name))->getConstant('PRIORITY') ?: 0;
-
-            $middleware = $container->get($name);
-            $typeResolver->pipe($middleware, (int) $priority);
+        foreach ($config->getTypeResolverMiddlewares() as $name => $priority) {
+            $typeResolver->pipe($container->get($name), $priority);
         }
 
         return $typeResolver;
+    }
+
+    private function buildObjectFieldResolver(
+        ContainerInterface $container,
+        GraphQLConfig $config,
+    ): ObjectFieldResolver {
+        $objectFieldResolver = new ObjectFieldResolver();
+
+        foreach ($config->getObjectFieldResolverMiddlewares() as $name => $priority) {
+            $objectFieldResolver->pipe($container->get($name), $priority);
+        }
+
+        return $objectFieldResolver;
+    }
+
+    private function buildInputObjectFieldResolver(
+        ContainerInterface $container,
+        GraphQLConfig $config,
+    ): InputObjectFieldResolver {
+        $inputObjectFieldResolver = new InputObjectFieldResolver();
+
+        foreach ($config->getInputObjectFieldResolverMiddlewares() as $name => $priority) {
+            $inputObjectFieldResolver->pipe($container->get($name), $priority);
+        }
+
+        return $inputObjectFieldResolver;
+    }
+
+    private function buildArgumentResolver(
+        ContainerInterface $container,
+        GraphQLConfig $config,
+    ): ArgumentResolver {
+        $argumentResolver = new ArgumentResolver();
+
+        foreach ($config->getArgumentResolverMiddlewares() as $name => $priority) {
+            $argumentResolver->pipe($container->get($name), $priority);
+        }
+
+        return $argumentResolver;
     }
 }

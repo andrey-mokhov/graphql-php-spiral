@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace Andi\GraphQL\Spiral\Config;
 
+use Andi\GraphQL\ArgumentResolver\Middleware\ArgumentConfigurationMiddleware;
+use Andi\GraphQL\ArgumentResolver\Middleware\ArgumentMiddleware;
+use Andi\GraphQL\InputObjectFieldResolver\Middleware\InputObjectFieldMiddleware;
+use Andi\GraphQL\InputObjectFieldResolver\Middleware\WebonyxInputObjectFieldMiddleware;
+use Andi\GraphQL\ObjectFieldResolver\Middleware\ObjectFieldMiddleware;
+use Andi\GraphQL\ObjectFieldResolver\Middleware\WebonyxObjectFieldMiddleware;
 use Andi\GraphQL\TypeResolver\Middleware\GraphQLTypeMiddleware;
 use Andi\GraphQL\TypeResolver\Middleware\WebonyxGraphQLTypeMiddleware;
 use Spiral\Core\InjectableConfig;
@@ -22,8 +28,23 @@ final class GraphQLConfig extends InjectableConfig
         'contextClass' => null,
 
         'typeResolverMiddlewares' => [
-            WebonyxGraphQLTypeMiddleware::class,
-            GraphQLTypeMiddleware::class,
+            WebonyxGraphQLTypeMiddleware::class => WebonyxGraphQLTypeMiddleware::PRIORITY,
+            GraphQLTypeMiddleware::class        => GraphQLTypeMiddleware::PRIORITY,
+        ],
+
+        'objectFieldResolverMiddlewares' => [
+            ObjectFieldMiddleware::class        => ObjectFieldMiddleware::PRIORITY,
+            WebonyxObjectFieldMiddleware::class => WebonyxObjectFieldMiddleware::PRIORITY,
+        ],
+
+        'inputObjectFieldResolverMiddlewares' => [
+            InputObjectFieldMiddleware::class        => InputObjectFieldMiddleware::PRIORITY,
+            WebonyxInputObjectFieldMiddleware::class => WebonyxInputObjectFieldMiddleware::PRIORITY,
+        ],
+
+        'argumentResolverMiddlewares' => [
+            ArgumentMiddleware::class              => ArgumentMiddleware::PRIORITY,
+            ArgumentConfigurationMiddleware::class => ArgumentConfigurationMiddleware::PRIORITY,
         ],
     ];
 
@@ -51,10 +72,34 @@ final class GraphQLConfig extends InjectableConfig
     }
 
     /**
-     * @return array<int, class-string>
+     * @return array<class-string,int>
      */
     public function getTypeResolverMiddlewares(): array
     {
         return $this->config['typeResolverMiddlewares'];
+    }
+
+    /**
+     * @return array<class-string,int>
+     */
+    public function getObjectFieldResolverMiddlewares(): array
+    {
+        return $this->config['objectFieldResolverMiddlewares'];
+    }
+
+    /**
+     * @return array<class-string,int>
+     */
+    public function getInputObjectFieldResolverMiddlewares(): array
+    {
+        return $this->config['inputObjectFieldResolverMiddlewares'];
+    }
+
+    /**
+     * @return array<class-string,int>
+     */
+    public function getArgumentResolverMiddlewares(): array
+    {
+        return $this->config['argumentResolverMiddlewares'];
     }
 }
