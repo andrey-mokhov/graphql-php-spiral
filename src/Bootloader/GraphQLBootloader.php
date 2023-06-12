@@ -11,6 +11,7 @@ use Andi\GraphQL\InputObjectFieldResolver\InputObjectFieldResolverInterface;
 use Andi\GraphQL\ObjectFieldResolver\ObjectFieldResolver;
 use Andi\GraphQL\ObjectFieldResolver\ObjectFieldResolverInterface;
 use Andi\GraphQL\Spiral\Config\GraphQLConfig;
+use Andi\GraphQL\Spiral\Listener\AttributedTypeLoaderListener;
 use Andi\GraphQL\Spiral\Listener\MutationFieldListener;
 use Andi\GraphQL\Spiral\Listener\QueryFieldListener;
 use Andi\GraphQL\Spiral\Listener\TypeLoaderListener;
@@ -81,6 +82,7 @@ final class GraphQLBootloader extends Bootloader
         TypeRegistryInterface $typeRegistry,
         TypeResolverInterface $typeResolver,
         TokenizerListenerRegistryInterface $listenerRegistry,
+        AttributedTypeLoaderListener $attributedTypeLoaderListener,
         TypeLoaderListener $typeLoaderListener,
         QueryFieldListener $queryFieldListener,
         MutationFieldListener $mutationFieldListener,
@@ -88,6 +90,7 @@ final class GraphQLBootloader extends Bootloader
         $this->registerQueryType($config->getQueryType(), $typeRegistry, $typeResolver);
         $this->registerMutationType($config->getMutationType(), $typeRegistry, $typeResolver);
 
+        $listenerRegistry->addListener($attributedTypeLoaderListener);
         $listenerRegistry->addListener($typeLoaderListener);
         $listenerRegistry->addListener($queryFieldListener);
         $listenerRegistry->addListener($mutationFieldListener);

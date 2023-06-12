@@ -9,7 +9,10 @@ use Andi\GraphQL\ArgumentResolver\Middleware\ArgumentMiddleware;
 use Andi\GraphQL\InputObjectFieldResolver\Middleware\InputObjectFieldMiddleware;
 use Andi\GraphQL\InputObjectFieldResolver\Middleware\WebonyxInputObjectFieldMiddleware;
 use Andi\GraphQL\ObjectFieldResolver\Middleware\ObjectFieldMiddleware;
+use Andi\GraphQL\ObjectFieldResolver\Middleware\ReflectionMethodMiddleware;
+use Andi\GraphQL\ObjectFieldResolver\Middleware\ReflectionPropertyMiddleware;
 use Andi\GraphQL\ObjectFieldResolver\Middleware\WebonyxObjectFieldMiddleware;
+use Andi\GraphQL\TypeResolver\Middleware\AttributedGraphQLTypeMiddleware;
 use Andi\GraphQL\TypeResolver\Middleware\GraphQLTypeMiddleware;
 use Andi\GraphQL\TypeResolver\Middleware\WebonyxGraphQLTypeMiddleware;
 use Spiral\Core\InjectableConfig;
@@ -28,11 +31,14 @@ final class GraphQLConfig extends InjectableConfig
         'contextClass' => null,
 
         'typeResolverMiddlewares' => [
-            WebonyxGraphQLTypeMiddleware::class => WebonyxGraphQLTypeMiddleware::PRIORITY,
-            GraphQLTypeMiddleware::class        => GraphQLTypeMiddleware::PRIORITY,
+            WebonyxGraphQLTypeMiddleware::class    => WebonyxGraphQLTypeMiddleware::PRIORITY,
+            GraphQLTypeMiddleware::class           => GraphQLTypeMiddleware::PRIORITY,
+            AttributedGraphQLTypeMiddleware::class => AttributedGraphQLTypeMiddleware::PRIORITY,
         ],
 
         'objectFieldResolverMiddlewares' => [
+            ReflectionMethodMiddleware::class   => ReflectionMethodMiddleware::PRIORITY,
+            ReflectionPropertyMiddleware::class => ReflectionPropertyMiddleware::PRIORITY,
             ObjectFieldMiddleware::class        => ObjectFieldMiddleware::PRIORITY,
             WebonyxObjectFieldMiddleware::class => WebonyxObjectFieldMiddleware::PRIORITY,
         ],
