@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Andi\GraphQL\Spiral\Listener;
 
+use Andi\GraphQL\Attribute\InputObjectType;
 use Andi\GraphQL\Attribute\ObjectField;
 use Andi\GraphQL\Attribute\ObjectType;
 use Andi\GraphQL\Exception\CantResolveGraphQLTypeException;
@@ -16,6 +17,7 @@ use Spiral\Tokenizer\Attribute\TargetAttribute;
 use Spiral\Tokenizer\TokenizationListenerInterface;
 
 #[TargetAttribute(attribute: ObjectType::class)]
+#[TargetAttribute(attribute: InputObjectType::class)]
 final class AttributedTypeLoaderListener implements TokenizationListenerInterface
 {
     public function __construct(
