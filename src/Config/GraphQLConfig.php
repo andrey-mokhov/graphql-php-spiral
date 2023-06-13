@@ -6,6 +6,7 @@ namespace Andi\GraphQL\Spiral\Config;
 
 use Andi\GraphQL\ArgumentResolver\Middleware\ArgumentConfigurationMiddleware;
 use Andi\GraphQL\ArgumentResolver\Middleware\ArgumentMiddleware;
+use Andi\GraphQL\ArgumentResolver\Middleware\ReflectionParameterMiddleware;
 use Andi\GraphQL\InputObjectFieldResolver\Middleware\InputObjectFieldMiddleware;
 use Andi\GraphQL\InputObjectFieldResolver\Middleware\WebonyxInputObjectFieldMiddleware;
 use Andi\GraphQL\ObjectFieldResolver\Middleware\ObjectFieldMiddleware;
@@ -49,6 +50,7 @@ final class GraphQLConfig extends InjectableConfig
         ],
 
         'argumentResolverMiddlewares' => [
+            ReflectionParameterMiddleware::class   => ReflectionParameterMiddleware::PRIORITY,
             ArgumentMiddleware::class              => ArgumentMiddleware::PRIORITY,
             ArgumentConfigurationMiddleware::class => ArgumentConfigurationMiddleware::PRIORITY,
         ],
