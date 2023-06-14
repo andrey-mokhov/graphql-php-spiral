@@ -4,18 +4,10 @@ declare(strict_types=1);
 
 namespace Andi\GraphQL\Spiral\Config;
 
-use Andi\GraphQL\ArgumentResolver\Middleware\ArgumentConfigurationMiddleware;
-use Andi\GraphQL\ArgumentResolver\Middleware\ArgumentMiddleware;
-use Andi\GraphQL\ArgumentResolver\Middleware\ReflectionParameterMiddleware;
-use Andi\GraphQL\InputObjectFieldResolver\Middleware\InputObjectFieldMiddleware;
-use Andi\GraphQL\InputObjectFieldResolver\Middleware\WebonyxInputObjectFieldMiddleware;
-use Andi\GraphQL\ObjectFieldResolver\Middleware\ObjectFieldMiddleware;
-use Andi\GraphQL\ObjectFieldResolver\Middleware\ReflectionMethodMiddleware;
-use Andi\GraphQL\ObjectFieldResolver\Middleware\ReflectionPropertyMiddleware;
-use Andi\GraphQL\ObjectFieldResolver\Middleware\WebonyxObjectFieldMiddleware;
-use Andi\GraphQL\TypeResolver\Middleware\AttributedGraphQLTypeMiddleware;
-use Andi\GraphQL\TypeResolver\Middleware\GraphQLTypeMiddleware;
-use Andi\GraphQL\TypeResolver\Middleware\WebonyxGraphQLTypeMiddleware;
+use Andi\GraphQL\ArgumentResolver\Middleware as Argument;
+use Andi\GraphQL\InputObjectFieldResolver\Middleware as Inputs;
+use Andi\GraphQL\ObjectFieldResolver\Middleware as Objects;
+use Andi\GraphQL\TypeResolver\Middleware as Types;
 use Spiral\Core\InjectableConfig;
 
 final class GraphQLConfig extends InjectableConfig
@@ -32,27 +24,29 @@ final class GraphQLConfig extends InjectableConfig
         'contextClass' => null,
 
         'typeResolverMiddlewares' => [
-            WebonyxGraphQLTypeMiddleware::class    => WebonyxGraphQLTypeMiddleware::PRIORITY,
-            GraphQLTypeMiddleware::class           => GraphQLTypeMiddleware::PRIORITY,
-            AttributedGraphQLTypeMiddleware::class => AttributedGraphQLTypeMiddleware::PRIORITY,
+            Types\WebonyxGraphQLTypeMiddleware::class    => Types\WebonyxGraphQLTypeMiddleware::PRIORITY,
+            Types\GraphQLTypeMiddleware::class           => Types\GraphQLTypeMiddleware::PRIORITY,
+            Types\AttributedGraphQLTypeMiddleware::class => Types\AttributedGraphQLTypeMiddleware::PRIORITY,
         ],
 
         'objectFieldResolverMiddlewares' => [
-            ReflectionMethodMiddleware::class   => ReflectionMethodMiddleware::PRIORITY,
-            ReflectionPropertyMiddleware::class => ReflectionPropertyMiddleware::PRIORITY,
-            ObjectFieldMiddleware::class        => ObjectFieldMiddleware::PRIORITY,
-            WebonyxObjectFieldMiddleware::class => WebonyxObjectFieldMiddleware::PRIORITY,
+            Objects\ReflectionMethodMiddleware::class   => Objects\ReflectionMethodMiddleware::PRIORITY,
+            Objects\ReflectionPropertyMiddleware::class => Objects\ReflectionPropertyMiddleware::PRIORITY,
+            Objects\ObjectFieldMiddleware::class        => Objects\ObjectFieldMiddleware::PRIORITY,
+            Objects\WebonyxObjectFieldMiddleware::class => Objects\WebonyxObjectFieldMiddleware::PRIORITY,
         ],
 
         'inputObjectFieldResolverMiddlewares' => [
-            InputObjectFieldMiddleware::class        => InputObjectFieldMiddleware::PRIORITY,
-            WebonyxInputObjectFieldMiddleware::class => WebonyxInputObjectFieldMiddleware::PRIORITY,
+            Inputs\ReflectionPropertyMiddleware::class      => Inputs\ReflectionPropertyMiddleware::PRIORITY,
+            Inputs\ReflectionMethodMiddleware::class        => Inputs\ReflectionMethodMiddleware::PRIORITY,
+            Inputs\InputObjectFieldMiddleware::class        => Inputs\InputObjectFieldMiddleware::PRIORITY,
+            Inputs\WebonyxInputObjectFieldMiddleware::class => Inputs\WebonyxInputObjectFieldMiddleware::PRIORITY,
         ],
 
         'argumentResolverMiddlewares' => [
-            ReflectionParameterMiddleware::class   => ReflectionParameterMiddleware::PRIORITY,
-            ArgumentMiddleware::class              => ArgumentMiddleware::PRIORITY,
-            ArgumentConfigurationMiddleware::class => ArgumentConfigurationMiddleware::PRIORITY,
+            Argument\ReflectionParameterMiddleware::class   => Argument\ReflectionParameterMiddleware::PRIORITY,
+            Argument\ArgumentMiddleware::class              => Argument\ArgumentMiddleware::PRIORITY,
+            Argument\ArgumentConfigurationMiddleware::class => Argument\ArgumentConfigurationMiddleware::PRIORITY,
         ],
     ];
 
