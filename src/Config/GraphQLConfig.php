@@ -8,6 +8,7 @@ use Andi\GraphQL\ArgumentResolver\Middleware as Argument;
 use Andi\GraphQL\InputObjectFieldResolver\Middleware as Inputs;
 use Andi\GraphQL\ObjectFieldResolver\Middleware as Objects;
 use Andi\GraphQL\TypeResolver\Middleware as Types;
+use App\GraphQL\Type\DirectionEnum;
 use Spiral\Core\InjectableConfig;
 
 final class GraphQLConfig extends InjectableConfig
@@ -21,7 +22,7 @@ final class GraphQLConfig extends InjectableConfig
         'url'          => '/api/graphql',
         'queryType'    => self::DEFAULT_QUERY_TYPE,
         'mutationType' => null,
-        'contextClass' => null,
+        'context'      => null,
 
         'typeResolverMiddlewares' => [
             Types\WebonyxGraphQLTypeMiddleware::class    => Types\WebonyxGraphQLTypeMiddleware::PRIORITY,
@@ -47,6 +48,10 @@ final class GraphQLConfig extends InjectableConfig
             Argument\ReflectionParameterMiddleware::class   => Argument\ReflectionParameterMiddleware::PRIORITY,
             Argument\ArgumentMiddleware::class              => Argument\ArgumentMiddleware::PRIORITY,
             Argument\ArgumentConfigurationMiddleware::class => Argument\ArgumentConfigurationMiddleware::PRIORITY,
+        ],
+
+        'additionalTypes' => [
+            DirectionEnum::class,
         ],
     ];
 
@@ -103,5 +108,13 @@ final class GraphQLConfig extends InjectableConfig
     public function getArgumentResolverMiddlewares(): array
     {
         return $this->config['argumentResolverMiddlewares'];
+    }
+
+    /**
+     * @return array<class-string, string[]>
+     */
+    public function getAdditionalTypes(): array
+    {
+        return $this->config['additionalTypes'];
     }
 }

@@ -28,7 +28,7 @@ use GraphQL\Server\StandardServer;
 use GraphQL\Type\Schema;
 use GraphQL\Type\SchemaConfig;
 use Psr\Container\ContainerInterface;
-use ReflectionClass;
+use ReflectionEnum;
 use Spiral\Boot\Bootloader\Bootloader;
 use Spiral\Boot\EnvironmentInterface;
 use Spiral\Bootloader\Http\HttpBootloader;
@@ -89,6 +89,7 @@ final class GraphQLBootloader extends Bootloader
     ): void {
         $this->registerQueryType($config->getQueryType(), $typeRegistry, $typeResolver);
         $this->registerMutationType($config->getMutationType(), $typeRegistry, $typeResolver);
+        $this->registerAdditionalTypes($config->getAdditionalTypes(), $typeRegistry, $typeResolver);
 
         $listenerRegistry->addListener($attributedTypeLoaderListener);
         $listenerRegistry->addListener($typeLoaderListener);
@@ -128,6 +129,24 @@ final class GraphQLBootloader extends Bootloader
 
         $queryType = $typeResolver->resolve($class);
         $typeRegistry->register($queryType, $class);
+    }
+
+    private function registerAdditionalTypes(
+        array $types,
+        TypeRegistryInterface $typeRegistry,
+        TypeResolverInterface $typeResolver,
+    ): void {
+//        foreach ($types as $name => $aliases) {
+//            $aliases = (array) $aliases;
+//            if (is_int($name)) {
+//                $name = reset($aliases);
+//            }
+//            if (enum_exists($name)) {
+//                $name = new ReflectionEnum($name);
+//            }
+//            $type = $typeResolver->resolve($name);
+//            $typeRegistry->register($type, ...$aliases);
+//        }
     }
 
     private function buildStandardServer(ServerConfig $config): StandardServer
