@@ -8,6 +8,7 @@ use Andi\GraphQL\ArgumentResolver\Middleware as Argument;
 use Andi\GraphQL\InputObjectFieldResolver\Middleware as Inputs;
 use Andi\GraphQL\ObjectFieldResolver\Middleware as Objects;
 use Andi\GraphQL\TypeResolver\Middleware as Types;
+use App\GraphQL\Type\AccountInterface;
 use App\GraphQL\Type\DirectionEnum;
 use Spiral\Core\InjectableConfig;
 
@@ -25,6 +26,7 @@ final class GraphQLConfig extends InjectableConfig
         'context'      => null,
 
         'typeResolverMiddlewares' => [
+            Types\EnumTypeMiddleware::class              => Types\EnumTypeMiddleware::PRIORITY,
             Types\WebonyxGraphQLTypeMiddleware::class    => Types\WebonyxGraphQLTypeMiddleware::PRIORITY,
             Types\GraphQLTypeMiddleware::class           => Types\GraphQLTypeMiddleware::PRIORITY,
             Types\AttributedGraphQLTypeMiddleware::class => Types\AttributedGraphQLTypeMiddleware::PRIORITY,
@@ -50,9 +52,7 @@ final class GraphQLConfig extends InjectableConfig
             Argument\ArgumentConfigurationMiddleware::class => Argument\ArgumentConfigurationMiddleware::PRIORITY,
         ],
 
-        'additionalTypes' => [
-            DirectionEnum::class,
-        ],
+        'additionalTypes' => [],
     ];
 
     public function getUrl(): string

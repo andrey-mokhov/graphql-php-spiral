@@ -6,6 +6,8 @@ namespace Andi\GraphQL\Spiral\Bootloader;
 
 use Andi\GraphQL\ArgumentResolver\ArgumentResolver;
 use Andi\GraphQL\ArgumentResolver\ArgumentResolverInterface;
+use Andi\GraphQL\Definition\Type\TypeInterface;
+use Andi\GraphQL\Exception\CantResolveGraphQLTypeException;
 use Andi\GraphQL\InputObjectFieldResolver\InputObjectFieldResolver;
 use Andi\GraphQL\InputObjectFieldResolver\InputObjectFieldResolverInterface;
 use Andi\GraphQL\ObjectFieldResolver\ObjectFieldResolver;
@@ -28,6 +30,7 @@ use GraphQL\Server\StandardServer;
 use GraphQL\Type\Schema;
 use GraphQL\Type\SchemaConfig;
 use Psr\Container\ContainerInterface;
+use ReflectionClass;
 use ReflectionEnum;
 use Spiral\Boot\Bootloader\Bootloader;
 use Spiral\Boot\EnvironmentInterface;
@@ -136,17 +139,24 @@ final class GraphQLBootloader extends Bootloader
         TypeRegistryInterface $typeRegistry,
         TypeResolverInterface $typeResolver,
     ): void {
-//        foreach ($types as $name => $aliases) {
-//            $aliases = (array) $aliases;
-//            if (is_int($name)) {
-//                $name = reset($aliases);
-//            }
-//            if (enum_exists($name)) {
-//                $name = new ReflectionEnum($name);
-//            }
-//            $type = $typeResolver->resolve($name);
-//            $typeRegistry->register($type, ...$aliases);
-//        }
+        foreach ($types as $name => $aliases) {
+            $aliases = (array) $aliases;
+            if (is_int($name)) {
+                $name = reset($aliases);
+            }
+
+            if (enum_exists($name)) {
+                $type = $typeResolver->resolve(new ReflectionEnum($name));
+            } elseif (is_subclass_of($name, TypeInterface::class)) {
+                $type = $typeResolver->resolve($name);
+            } elseif (class_exists($name) || interface_exists($name)) {
+                $type = $typeResolver->resolve(new ReflectionClass($name));
+            } else {
+                throw new CantResolveGraphQLTypeException(sprintf('Can\'t resolve GraphQL type for "%s"', $name));
+            }
+
+            $typeRegistry->register($type, ...$aliases);
+        }
     }
 
     private function buildStandardServer(ServerConfig $config): StandardServer
