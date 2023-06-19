@@ -33,10 +33,14 @@ final class GraphQLConfig extends InjectableConfig
         ],
 
         'objectFieldResolverMiddlewares' => [
-            Objects\ReflectionMethodMiddleware::class   => Objects\ReflectionMethodMiddleware::PRIORITY,
-            Objects\ReflectionPropertyMiddleware::class => Objects\ReflectionPropertyMiddleware::PRIORITY,
-            Objects\ObjectFieldMiddleware::class        => Objects\ObjectFieldMiddleware::PRIORITY,
-            Objects\WebonyxObjectFieldMiddleware::class => Objects\WebonyxObjectFieldMiddleware::PRIORITY,
+            Objects\QueryFieldByReflectionMethodMiddleware::class      => Objects\QueryFieldByReflectionMethodMiddleware::PRIORITY,
+            Objects\MutationFieldByReflectionMethodMiddleware::class   => Objects\MutationFieldByReflectionMethodMiddleware::PRIORITY,
+            Objects\AdditionalFieldByReflectionMethodMiddleware::class => Objects\AdditionalFieldByReflectionMethodMiddleware::PRIORITY,
+            Objects\InterfaceFieldByReflectionMethodMiddleware::class  => Objects\InterfaceFieldByReflectionMethodMiddleware::PRIORITY,
+            Objects\ObjectFieldByReflectionMethodMiddleware::class     => Objects\ObjectFieldByReflectionMethodMiddleware::PRIORITY,
+            Objects\ObjectFieldByReflectionPropertyMiddleware::class   => Objects\ObjectFieldByReflectionPropertyMiddleware::PRIORITY,
+            Objects\ObjectFieldMiddleware::class                       => Objects\ObjectFieldMiddleware::PRIORITY,
+            Objects\WebonyxObjectFieldMiddleware::class                => Objects\WebonyxObjectFieldMiddleware::PRIORITY,
         ],
 
         'inputObjectFieldResolverMiddlewares' => [
@@ -52,7 +56,8 @@ final class GraphQLConfig extends InjectableConfig
             Argument\ArgumentConfigurationMiddleware::class => Argument\ArgumentConfigurationMiddleware::PRIORITY,
         ],
 
-        'additionalTypes' => [],
+        'additionalTypes' => [
+        ],
     ];
 
     public function getUrl(): string
