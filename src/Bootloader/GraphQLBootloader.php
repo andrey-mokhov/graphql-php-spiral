@@ -6,11 +6,16 @@ namespace Andi\GraphQL\Spiral\Bootloader;
 
 use Andi\GraphQL\ArgumentResolver\ArgumentResolver;
 use Andi\GraphQL\ArgumentResolver\ArgumentResolverInterface;
+use Andi\GraphQL\Definition\Type\TypeInterface;
+use Andi\GraphQL\Exception\CantResolveGraphQLTypeException;
 use Andi\GraphQL\InputObjectFieldResolver\InputObjectFieldResolver;
 use Andi\GraphQL\InputObjectFieldResolver\InputObjectFieldResolverInterface;
 use Andi\GraphQL\ObjectFieldResolver\ObjectFieldResolver;
 use Andi\GraphQL\ObjectFieldResolver\ObjectFieldResolverInterface;
 use Andi\GraphQL\Spiral\Config\GraphQLConfig;
+use Andi\GraphQL\Spiral\Listener\AdditionalFieldListener;
+use Andi\GraphQL\Spiral\Listener\AttributedQueryFieldListener;
+use Andi\GraphQL\Spiral\Listener\AttributedTypeLoaderListener;
 use Andi\GraphQL\Spiral\Listener\MutationFieldListener;
 use Andi\GraphQL\Spiral\Listener\QueryFieldListener;
 use Andi\GraphQL\Spiral\Listener\TypeLoaderListener;
@@ -28,6 +33,7 @@ use GraphQL\Type\Schema;
 use GraphQL\Type\SchemaConfig;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
+use ReflectionEnum;
 use Spiral\Boot\Bootloader\Bootloader;
 use Spiral\Boot\EnvironmentInterface;
 use Spiral\Bootloader\Http\HttpBootloader;
@@ -81,16 +87,23 @@ final class GraphQLBootloader extends Bootloader
         TypeRegistryInterface $typeRegistry,
         TypeResolverInterface $typeResolver,
         TokenizerListenerRegistryInterface $listenerRegistry,
+        AttributedTypeLoaderListener $attributedTypeLoaderListener,
         TypeLoaderListener $typeLoaderListener,
         QueryFieldListener $queryFieldListener,
         MutationFieldListener $mutationFieldListener,
+        AttributedQueryFieldListener $attributedQueryFieldListener,
+        AdditionalFieldListener $additionalFieldListener,
     ): void {
         $this->registerQueryType($config->getQueryType(), $typeRegistry, $typeResolver);
         $this->registerMutationType($config->getMutationType(), $typeRegistry, $typeResolver);
+        $this->registerAdditionalTypes($config->getAdditionalTypes(), $typeRegistry, $typeResolver);
 
+        $listenerRegistry->addListener($attributedTypeLoaderListener);
         $listenerRegistry->addListener($typeLoaderListener);
         $listenerRegistry->addListener($queryFieldListener);
         $listenerRegistry->addListener($mutationFieldListener);
+        $listenerRegistry->addListener($attributedQueryFieldListener);
+        $listenerRegistry->addListener($additionalFieldListener);
     }
 
     private function registerQueryType(
@@ -125,6 +138,31 @@ final class GraphQLBootloader extends Bootloader
 
         $queryType = $typeResolver->resolve($class);
         $typeRegistry->register($queryType, $class);
+    }
+
+    private function registerAdditionalTypes(
+        array $types,
+        TypeRegistryInterface $typeRegistry,
+        TypeResolverInterface $typeResolver,
+    ): void {
+        foreach ($types as $name => $aliases) {
+            $aliases = (array) $aliases;
+            if (is_int($name)) {
+                $name = reset($aliases);
+            }
+
+            if (enum_exists($name)) {
+                $type = $typeResolver->resolve(new ReflectionEnum($name));
+            } elseif (is_subclass_of($name, TypeInterface::class)) {
+                $type = $typeResolver->resolve($name);
+            } elseif (class_exists($name) || interface_exists($name)) {
+                $type = $typeResolver->resolve(new ReflectionClass($name));
+            } else {
+                throw new CantResolveGraphQLTypeException(sprintf('Can\'t resolve GraphQL type for "%s"', $name));
+            }
+
+            $typeRegistry->register($type, ...$aliases);
+        }
     }
 
     private function buildStandardServer(ServerConfig $config): StandardServer

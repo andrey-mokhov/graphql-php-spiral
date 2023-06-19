@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace Andi\GraphQL\Spiral\Config;
 
-use Andi\GraphQL\ArgumentResolver\Middleware\ArgumentConfigurationMiddleware;
-use Andi\GraphQL\ArgumentResolver\Middleware\ArgumentMiddleware;
-use Andi\GraphQL\InputObjectFieldResolver\Middleware\InputObjectFieldMiddleware;
-use Andi\GraphQL\InputObjectFieldResolver\Middleware\WebonyxInputObjectFieldMiddleware;
-use Andi\GraphQL\ObjectFieldResolver\Middleware\ObjectFieldMiddleware;
-use Andi\GraphQL\ObjectFieldResolver\Middleware\WebonyxObjectFieldMiddleware;
-use Andi\GraphQL\TypeResolver\Middleware\GraphQLTypeMiddleware;
-use Andi\GraphQL\TypeResolver\Middleware\WebonyxGraphQLTypeMiddleware;
+use Andi\GraphQL\ArgumentResolver\Middleware as Argument;
+use Andi\GraphQL\InputObjectFieldResolver\Middleware as Inputs;
+use Andi\GraphQL\ObjectFieldResolver\Middleware as Objects;
+use Andi\GraphQL\TypeResolver\Middleware as Types;
+use App\GraphQL\Type\AccountInterface;
+use App\GraphQL\Type\DirectionEnum;
 use Spiral\Core\InjectableConfig;
 
 final class GraphQLConfig extends InjectableConfig
@@ -25,26 +23,40 @@ final class GraphQLConfig extends InjectableConfig
         'url'          => '/api/graphql',
         'queryType'    => self::DEFAULT_QUERY_TYPE,
         'mutationType' => null,
-        'contextClass' => null,
+        'context'      => null,
 
         'typeResolverMiddlewares' => [
-            WebonyxGraphQLTypeMiddleware::class => WebonyxGraphQLTypeMiddleware::PRIORITY,
-            GraphQLTypeMiddleware::class        => GraphQLTypeMiddleware::PRIORITY,
+            Types\EnumTypeMiddleware::class              => Types\EnumTypeMiddleware::PRIORITY,
+            Types\WebonyxGraphQLTypeMiddleware::class    => Types\WebonyxGraphQLTypeMiddleware::PRIORITY,
+            Types\GraphQLTypeMiddleware::class           => Types\GraphQLTypeMiddleware::PRIORITY,
+            Types\AttributedGraphQLTypeMiddleware::class => Types\AttributedGraphQLTypeMiddleware::PRIORITY,
         ],
 
         'objectFieldResolverMiddlewares' => [
-            ObjectFieldMiddleware::class        => ObjectFieldMiddleware::PRIORITY,
-            WebonyxObjectFieldMiddleware::class => WebonyxObjectFieldMiddleware::PRIORITY,
+            Objects\QueryFieldByReflectionMethodMiddleware::class      => Objects\QueryFieldByReflectionMethodMiddleware::PRIORITY,
+            Objects\MutationFieldByReflectionMethodMiddleware::class   => Objects\MutationFieldByReflectionMethodMiddleware::PRIORITY,
+            Objects\AdditionalFieldByReflectionMethodMiddleware::class => Objects\AdditionalFieldByReflectionMethodMiddleware::PRIORITY,
+            Objects\InterfaceFieldByReflectionMethodMiddleware::class  => Objects\InterfaceFieldByReflectionMethodMiddleware::PRIORITY,
+            Objects\ObjectFieldByReflectionMethodMiddleware::class     => Objects\ObjectFieldByReflectionMethodMiddleware::PRIORITY,
+            Objects\ObjectFieldByReflectionPropertyMiddleware::class   => Objects\ObjectFieldByReflectionPropertyMiddleware::PRIORITY,
+            Objects\ObjectFieldMiddleware::class                       => Objects\ObjectFieldMiddleware::PRIORITY,
+            Objects\WebonyxObjectFieldMiddleware::class                => Objects\WebonyxObjectFieldMiddleware::PRIORITY,
         ],
 
         'inputObjectFieldResolverMiddlewares' => [
-            InputObjectFieldMiddleware::class        => InputObjectFieldMiddleware::PRIORITY,
-            WebonyxInputObjectFieldMiddleware::class => WebonyxInputObjectFieldMiddleware::PRIORITY,
+            Inputs\ReflectionPropertyMiddleware::class      => Inputs\ReflectionPropertyMiddleware::PRIORITY,
+            Inputs\ReflectionMethodMiddleware::class        => Inputs\ReflectionMethodMiddleware::PRIORITY,
+            Inputs\InputObjectFieldMiddleware::class        => Inputs\InputObjectFieldMiddleware::PRIORITY,
+            Inputs\WebonyxInputObjectFieldMiddleware::class => Inputs\WebonyxInputObjectFieldMiddleware::PRIORITY,
         ],
 
         'argumentResolverMiddlewares' => [
-            ArgumentMiddleware::class              => ArgumentMiddleware::PRIORITY,
-            ArgumentConfigurationMiddleware::class => ArgumentConfigurationMiddleware::PRIORITY,
+            Argument\ReflectionParameterMiddleware::class   => Argument\ReflectionParameterMiddleware::PRIORITY,
+            Argument\ArgumentMiddleware::class              => Argument\ArgumentMiddleware::PRIORITY,
+            Argument\ArgumentConfigurationMiddleware::class => Argument\ArgumentConfigurationMiddleware::PRIORITY,
+        ],
+
+        'additionalTypes' => [
         ],
     ];
 
@@ -101,5 +113,13 @@ final class GraphQLConfig extends InjectableConfig
     public function getArgumentResolverMiddlewares(): array
     {
         return $this->config['argumentResolverMiddlewares'];
+    }
+
+    /**
+     * @return array<class-string, string[]>
+     */
+    public function getAdditionalTypes(): array
+    {
+        return $this->config['additionalTypes'];
     }
 }
