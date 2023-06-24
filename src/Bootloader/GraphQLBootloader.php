@@ -188,7 +188,7 @@ final class GraphQLBootloader extends Bootloader
     private function buildSchemaConfig(TypeRegistryInterface $typeRegistry): SchemaConfig
     {
         $schemaConfig = new SchemaConfig();
-        $schemaConfig->setTypeLoader($typeRegistry);
+        $schemaConfig->setTypeLoader($typeRegistry->get(...));
         $schemaConfig->setTypes($typeRegistry->getTypes(...));
 
         $schemaConfig->setQuery($typeRegistry->get('Query'));

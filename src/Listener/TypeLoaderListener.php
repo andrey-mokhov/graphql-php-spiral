@@ -30,6 +30,10 @@ final class TypeLoaderListener implements TokenizationListenerInterface
 
     public function listen(ReflectionClass $class): void
     {
+        if ($class->isAbstract() || $class->isTrait()) {
+            return;
+        }
+
         $className = $class->getName();
 
         if ($this->typeRegistry->has($className)) {

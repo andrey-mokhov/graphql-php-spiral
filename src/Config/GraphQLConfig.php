@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Andi\GraphQL\Spiral\Config;
 
+use Andi\GraphQL\ArgumentResolver\ArgumentResolverInterface;
 use Andi\GraphQL\ArgumentResolver\Middleware as Argument;
+use Andi\GraphQL\InputObjectFieldResolver\InputObjectFieldResolverInterface;
 use Andi\GraphQL\InputObjectFieldResolver\Middleware as Inputs;
 use Andi\GraphQL\ObjectFieldResolver\Middleware as Objects;
+use Andi\GraphQL\ObjectFieldResolver\ObjectFieldResolverInterface;
 use Andi\GraphQL\TypeResolver\Middleware as Types;
-use App\GraphQL\Type\AccountInterface;
-use App\GraphQL\Type\DirectionEnum;
+use Andi\GraphQL\TypeResolver\TypeResolverInterface;
 use Spiral\Core\InjectableConfig;
 
 final class GraphQLConfig extends InjectableConfig
@@ -84,7 +86,7 @@ final class GraphQLConfig extends InjectableConfig
     }
 
     /**
-     * @return array<class-string,int>
+     * @return array<class-string<TypeResolverInterface>,int>
      */
     public function getTypeResolverMiddlewares(): array
     {
@@ -92,7 +94,7 @@ final class GraphQLConfig extends InjectableConfig
     }
 
     /**
-     * @return array<class-string,int>
+     * @return array<class-string<ObjectFieldResolverInterface>,int>
      */
     public function getObjectFieldResolverMiddlewares(): array
     {
@@ -100,7 +102,7 @@ final class GraphQLConfig extends InjectableConfig
     }
 
     /**
-     * @return array<class-string,int>
+     * @return array<class-string<InputObjectFieldResolverInterface>,int>
      */
     public function getInputObjectFieldResolverMiddlewares(): array
     {
@@ -108,7 +110,7 @@ final class GraphQLConfig extends InjectableConfig
     }
 
     /**
-     * @return array<class-string,int>
+     * @return array<class-string<ArgumentResolverInterface>,int>
      */
     public function getArgumentResolverMiddlewares(): array
     {
