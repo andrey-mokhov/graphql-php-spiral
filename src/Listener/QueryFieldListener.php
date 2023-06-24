@@ -25,6 +25,10 @@ final class QueryFieldListener implements TokenizationListenerInterface
 
     public function listen(ReflectionClass $class): void
     {
+        if ($class->isAbstract() || $class->isTrait() || $class->isEnum()) {
+            return;
+        }
+
         $this->classes[] = $class->getName();
     }
 

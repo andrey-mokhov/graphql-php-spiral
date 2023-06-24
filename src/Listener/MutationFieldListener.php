@@ -25,6 +25,10 @@ final class MutationFieldListener implements TokenizationListenerInterface
 
     public function listen(ReflectionClass $class): void
     {
+        if ($class->isAbstract() || $class->isTrait() || $class->isEnum()) {
+            return;
+        }
+
         $this->classes[] = $class->getName();
     }
 
