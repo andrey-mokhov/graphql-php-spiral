@@ -1,4 +1,8 @@
-# graphql for Spiral Framework
+# GraphQL library for Spiral Framework
+
+
+
+# roadmap
 
 release 0.1
 

@@ -3,7 +3,7 @@
     "description": "GraphQL library for Spiral Framework",
     "type": "library",
     "require": {
-        "php": "^8.2",
+        "php": "^8.1",
         "andi/graphql-php": "*"
     },
     "license": "MIT",
