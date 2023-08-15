@@ -26,7 +26,6 @@ use Andi\GraphQL\TypeRegistry;
 use Andi\GraphQL\TypeRegistryInterface;
 use Andi\GraphQL\TypeResolver\TypeResolver;
 use Andi\GraphQL\TypeResolver\TypeResolverInterface;
-use App\Application\Bootloader\RoutesBootloader;
 use GraphQL\Server\ServerConfig;
 use GraphQL\Server\StandardServer;
 use GraphQL\Type\Schema;
@@ -60,10 +59,6 @@ final class GraphQLBootloader extends Bootloader
         ObjectFieldResolver::class      => [self::class, 'buildObjectFieldResolver'],
         InputObjectFieldResolver::class => [self::class, 'buildInputObjectFieldResolver'],
         ArgumentResolver::class         => [self::class, 'buildArgumentResolver'],
-    ];
-
-    protected const DEPENDENCIES = [
-        RoutesBootloader::class,
     ];
 
     public function __construct(
