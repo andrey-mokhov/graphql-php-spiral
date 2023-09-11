@@ -1,10 +1,11 @@
 {
-    "name": "andi/graphql-php-spiral",
+    "name": "andi-lab/graphql-php-spiral",
     "description": "GraphQL library for Spiral Framework",
     "type": "library",
     "require": {
         "php": "^8.1",
-        "andi/graphql-php": "*"
+        "andi-lab/graphql-php": "*",
+        "spiral/framework": "^3.8"
     },
     "license": "MIT",
     "authors": [
