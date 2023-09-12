@@ -9,7 +9,11 @@ use Spiral\Console\Attribute\AsCommand;
 use Spiral\Console\Command;
 use Spiral\Files\FilesInterface;
 
-#[AsCommand(name: 'graphql:config', description: 'Create GraphQL config with default values')]
+#[AsCommand(
+    name: 'graphql:config',
+    description: 'Create GraphQL config with default values',
+    help: 'Dump default values into config/graphql.php file',
+)]
 final class ConfigCommand extends Command
 {
     public function __construct(
@@ -21,7 +25,7 @@ final class ConfigCommand extends Command
 
     public function perform(): int
     {
-        $this->info(sprintf('Create GraphQL config with default values: %sgraphql.php', $this->dirs->get('config')));
+        $this->info(sprintf('Create default configuration into: %sgraphql.php', $this->dirs->get('config')));
 
         $source = __DIR__ . '/../../config/graphql.php.sample';
         $destination = $this->dirs->get('config') . 'graphql.php';
