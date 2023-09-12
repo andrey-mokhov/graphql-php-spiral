@@ -12,8 +12,10 @@ use Andi\GraphQL\InputObjectFieldResolver\InputObjectFieldResolver;
 use Andi\GraphQL\InputObjectFieldResolver\InputObjectFieldResolverInterface;
 use Andi\GraphQL\ObjectFieldResolver\ObjectFieldResolver;
 use Andi\GraphQL\ObjectFieldResolver\ObjectFieldResolverInterface;
+use Andi\GraphQL\Spiral\Command\ConfigCommand;
 use Andi\GraphQL\Spiral\Config\GraphQLConfig;
 use Andi\GraphQL\Spiral\Listener\AdditionalFieldListener;
+use Andi\GraphQL\Spiral\Listener\AttributedMutationFieldListener;
 use Andi\GraphQL\Spiral\Listener\AttributedQueryFieldListener;
 use Andi\GraphQL\Spiral\Listener\AttributedTypeLoaderListener;
 use Andi\GraphQL\Spiral\Listener\MutationFieldListener;
@@ -37,6 +39,7 @@ use Spiral\Boot\Bootloader\Bootloader;
 use Spiral\Boot\EnvironmentInterface;
 use Spiral\Bootloader\Http\HttpBootloader;
 use Spiral\Config\ConfiguratorInterface;
+use Spiral\Console\Bootloader\ConsoleBootloader;
 use Spiral\Tokenizer\TokenizerListenerRegistryInterface;
 
 final class GraphQLBootloader extends Bootloader
@@ -68,13 +71,16 @@ final class GraphQLBootloader extends Bootloader
 
     public function init(
         EnvironmentInterface $env,
-        HttpBootloader $bootloader,
+        HttpBootloader $http,
+        ConsoleBootloader $console,
     ): void {
         $this->configurator->setDefaults(GraphQLConfig::CONFIG, [
             'url' => $env->get('GRAPHQL_URL', '/api/graphql'),
         ]);
 
-        $bootloader->addMiddleware(GraphQLMiddleware::class);
+        $http->addMiddleware(GraphQLMiddleware::class);
+
+        $console->addCommand(ConfigCommand::class);
     }
 
     public function boot(
@@ -87,6 +93,7 @@ final class GraphQLBootloader extends Bootloader
         QueryFieldListener $queryFieldListener,
         MutationFieldListener $mutationFieldListener,
         AttributedQueryFieldListener $attributedQueryFieldListener,
+        AttributedMutationFieldListener $attributedMutationFieldListener,
         AdditionalFieldListener $additionalFieldListener,
     ): void {
         $this->registerQueryType($config->getQueryType(), $typeRegistry, $typeResolver);
@@ -98,6 +105,7 @@ final class GraphQLBootloader extends Bootloader
         $listenerRegistry->addListener($queryFieldListener);
         $listenerRegistry->addListener($mutationFieldListener);
         $listenerRegistry->addListener($attributedQueryFieldListener);
+        $listenerRegistry->addListener($attributedMutationFieldListener);
         $listenerRegistry->addListener($additionalFieldListener);
     }
 
@@ -180,16 +188,19 @@ final class GraphQLBootloader extends Bootloader
         return new Schema($config);
     }
 
-    private function buildSchemaConfig(TypeRegistryInterface $typeRegistry): SchemaConfig
-    {
+    private function buildSchemaConfig(
+        GraphQLConfig $config,
+        TypeRegistryInterface $typeRegistry,
+    ): SchemaConfig {
         $schemaConfig = new SchemaConfig();
         $schemaConfig->setTypeLoader($typeRegistry->get(...));
         $schemaConfig->setTypes($typeRegistry->getTypes(...));
 
-        $schemaConfig->setQuery($typeRegistry->get('Query'));
+        $schemaConfig->setQuery($typeRegistry->get($config->getQueryType()));
 
-        if ($typeRegistry->has('Mutation')) {
-            $schemaConfig->setMutation($typeRegistry->get('Mutation'));
+        $mutationType = $config->getMutationType();
+        if (null !== $mutationType && $typeRegistry->has($mutationType)) {
+            $schemaConfig->setMutation($typeRegistry->get($mutationType));
         }
 
         return $schemaConfig;
