@@ -80,9 +80,9 @@ final class GraphQLConfig extends InjectableConfig
     /**
      * @return class-string|null
      */
-    public function getContextClass(): ?string
+    public function getContext(): ?string
     {
-        return $this->config['contextClass'] ?? null;
+        return $this->config['context'] ?? null;
     }
 
     /**

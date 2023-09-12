@@ -33,9 +33,9 @@ final class GraphQLMiddleware implements MiddlewareInterface, SingletonInterface
             $response = $this->responseFactory->createResponse();
             $stream = $this->streamFactory->createStream();
 
-            if ($contextClass = $this->config->getContextClass()) {
+            if ($context = $this->config->getContext()) {
                 $serverConfig = $this->container->get(ServerConfig::class);
-                $serverConfig->setContext($this->container->get($contextClass));
+                $serverConfig->setContext($this->container->get($context));
             }
 
             return $this->server->processPsrRequest($request, $response, $stream);
