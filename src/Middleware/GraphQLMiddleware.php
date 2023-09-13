@@ -38,6 +38,11 @@ final class GraphQLMiddleware implements MiddlewareInterface, SingletonInterface
                 $serverConfig->setContext($this->container->get($context));
             }
 
+            if ($rootValue = $this->config->getRootValue()) {
+                $serverConfig ??= $this->container->get(ServerConfig::class);
+                $serverConfig->setRootValue($this->container->get($rootValue));
+            }
+
             return $this->server->processPsrRequest($request, $response, $stream);
         }
 

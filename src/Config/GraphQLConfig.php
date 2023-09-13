@@ -25,6 +25,7 @@ final class GraphQLConfig extends InjectableConfig
         'url'          => '/api/graphql',
         'queryType'    => self::DEFAULT_QUERY_TYPE,
         'mutationType' => null,
+        'rootValue'    => null,
         'context'      => null,
 
         'typeResolverMiddlewares' => [
@@ -75,6 +76,11 @@ final class GraphQLConfig extends InjectableConfig
     public function getMutationType(): ?string
     {
         return $this->config['mutationType'];
+    }
+
+    public function getRootValue(): ?string
+    {
+        return $this->config['rootValue'];
     }
 
     /**

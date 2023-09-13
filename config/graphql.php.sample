@@ -12,6 +12,7 @@ return [
     'url'          => getenv('GRAPHQL_URL') ?: '/api/graphql',
     'queryType'    => GraphQLConfig::DEFAULT_QUERY_TYPE,
     'mutationType' => null,
+    'rootValue'    => null,
     'context'      => null,
 
     'typeResolverMiddlewares' => [
