@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Andi\GraphQL\Spiral\Listener;
 
 use Andi\GraphQL\Attribute\AbstractField;
-use Andi\GraphQL\Type\DynamicObjectTypeInterface;
 use Andi\GraphQL\TypeRegistryInterface;
 use ReflectionClass;
 use ReflectionMethod;
@@ -17,12 +16,10 @@ abstract class AbstractAdditionalFieldListener implements TokenizationListenerIn
     /**
      * @var array<ReflectionMethod>
      */
-    private array $methods = [];
+    protected array $methods = [];
 
     /** @var class-string<AbstractField> */
     protected string $attribute;
-
-    protected string $targetType;
 
     public function __construct(
         protected readonly ReaderInterface $reader,
@@ -43,16 +40,6 @@ abstract class AbstractAdditionalFieldListener implements TokenizationListenerIn
 
             if (null !== $this->reader->firstFunctionMetadata($method, $this->attribute)) {
                 $this->methods[] = $method;
-            }
-        }
-    }
-
-    public function finalize(): void
-    {
-        $query = $this->typeRegistry->get($this->targetType);
-        if ($query instanceof DynamicObjectTypeInterface) {
-            foreach ($this->methods as $method) {
-                $query->addAdditionalField($method);
             }
         }
     }

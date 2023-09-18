@@ -12,11 +12,6 @@ use Spiral\Tokenizer\Attribute\TargetAttribute;
 #[TargetAttribute(AdditionalField::class)]
 final class AdditionalFieldListener extends AbstractAdditionalFieldListener
 {
-    /**
-     * @var array<int,ReflectionMethod>
-     */
-    private array $methods = [];
-
     protected string $attribute = AdditionalField::class;
 
     public function finalize(): void
