@@ -10,6 +10,7 @@ use Andi\GraphQL\TypeRegistryInterface;
 use Andi\GraphQL\TypeResolver\TypeResolverInterface;
 use GraphQL\Type\Definition as Webonyx;
 use ReflectionClass;
+use Spiral\Exceptions\ExceptionReporterInterface;
 use Spiral\Tokenizer\Attribute\TargetClass;
 use Spiral\Tokenizer\TokenizationListenerInterface;
 
@@ -25,6 +26,7 @@ final class TypeLoaderListener implements TokenizationListenerInterface
     public function __construct(
         private readonly TypeRegistryInterface $typeRegistry,
         private readonly TypeResolverInterface $typeResolver,
+        private readonly ExceptionReporterInterface $reporter,
     ) {
     }
 
@@ -43,7 +45,8 @@ final class TypeLoaderListener implements TokenizationListenerInterface
         try {
             $type = $this->typeResolver->resolve($className);
             $this->typeRegistry->register($type, $className);
-        } catch (CantResolveGraphQLTypeException) {
+        } catch (CantResolveGraphQLTypeException $e) {
+            $this->reporter->report($e);
         }
     }
 

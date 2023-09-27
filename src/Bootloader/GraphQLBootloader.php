@@ -45,23 +45,23 @@ use Spiral\Tokenizer\TokenizerListenerRegistryInterface;
 final class GraphQLBootloader extends Bootloader
 {
     protected const SINGLETONS = [
-        StandardServer::class        => [self::class, 'buildStandardServer'],
-        ServerConfig::class          => [self::class, 'buildServerConfig'],
-        Schema::class                => [self::class, 'buildSchema'],
-        SchemaConfig::class          => [self::class, 'buildSchemaConfig'],
+        StandardServer::class => [self::class, 'buildStandardServer'],
+        ServerConfig::class => [self::class, 'buildServerConfig'],
+        Schema::class => [self::class, 'buildSchema'],
+        SchemaConfig::class => [self::class, 'buildSchemaConfig'],
 
         TypeRegistryInterface::class => TypeRegistry::class,
-        TypeRegistry::class          => [self::class, 'buildTypeRegistry'],
+        TypeRegistry::class => [self::class, 'buildTypeRegistry'],
 
-        TypeResolverInterface::class             => TypeResolver::class,
-        ObjectFieldResolverInterface::class      => ObjectFieldResolver::class,
+        TypeResolverInterface::class => TypeResolver::class,
+        ObjectFieldResolverInterface::class => ObjectFieldResolver::class,
         InputObjectFieldResolverInterface::class => InputObjectFieldResolver::class,
-        ArgumentResolverInterface::class         => ArgumentResolver::class,
+        ArgumentResolverInterface::class => ArgumentResolver::class,
 
-        TypeResolver::class             => [self::class, 'buildTypeResolver'],
-        ObjectFieldResolver::class      => [self::class, 'buildObjectFieldResolver'],
+        TypeResolver::class => [self::class, 'buildTypeResolver'],
+        ObjectFieldResolver::class => [self::class, 'buildObjectFieldResolver'],
         InputObjectFieldResolver::class => [self::class, 'buildInputObjectFieldResolver'],
-        ArgumentResolver::class         => [self::class, 'buildArgumentResolver'],
+        ArgumentResolver::class => [self::class, 'buildArgumentResolver'],
     ];
 
     public function __construct(
