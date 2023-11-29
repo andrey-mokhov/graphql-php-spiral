@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace Andi\GraphQL\Spiral\Middleware;
 
 use Andi\GraphQL\Spiral\Config\GraphQLConfig;
-use GraphQL\Server\ServerConfig;
 use GraphQL\Server\StandardServer;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -23,7 +21,6 @@ final class GraphQLMiddleware implements MiddlewareInterface, SingletonInterface
         private readonly StandardServer $server,
         private readonly ResponseFactoryInterface $responseFactory,
         private readonly StreamFactoryInterface $streamFactory,
-        private readonly ContainerInterface $container,
     ) {
     }
 
@@ -32,16 +29,6 @@ final class GraphQLMiddleware implements MiddlewareInterface, SingletonInterface
         if ($request->getUri()->getPath() === $this->config->getUrl()) {
             $response = $this->responseFactory->createResponse();
             $stream = $this->streamFactory->createStream();
-
-            if ($context = $this->config->getContext()) {
-                $serverConfig = $this->container->get(ServerConfig::class);
-                $serverConfig->setContext($this->container->get($context));
-            }
-
-            if ($rootValue = $this->config->getRootValue()) {
-                $serverConfig ??= $this->container->get(ServerConfig::class);
-                $serverConfig->setRootValue($this->container->get($rootValue));
-            }
 
             return $this->server->processPsrRequest($request, $response, $stream);
         }

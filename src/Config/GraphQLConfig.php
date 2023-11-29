@@ -12,6 +12,7 @@ use Andi\GraphQL\ObjectFieldResolver\Middleware as Objects;
 use Andi\GraphQL\ObjectFieldResolver\ObjectFieldResolverInterface;
 use Andi\GraphQL\TypeResolver\Middleware as Types;
 use Andi\GraphQL\TypeResolver\TypeResolverInterface;
+use GraphQL\Error\DebugFlag;
 use Spiral\Core\InjectableConfig;
 
 final class GraphQLConfig extends InjectableConfig
@@ -22,40 +23,41 @@ final class GraphQLConfig extends InjectableConfig
     public const DEFAULT_MUTATION_TYPE = 'Mutation';
 
     protected array $config = [
-        'url'          => '/api/graphql',
-        'queryType'    => self::DEFAULT_QUERY_TYPE,
+        'url' => '/api/graphql',
+        'queryType' => self::DEFAULT_QUERY_TYPE,
         'mutationType' => null,
-        'rootValue'    => null,
-        'context'      => null,
+        'rootValue'=> null,
+        'context' => null,
+        'debugFlag' => null,
 
         'typeResolverMiddlewares' => [
-            Types\EnumTypeMiddleware::class              => Types\EnumTypeMiddleware::PRIORITY,
-            Types\WebonyxGraphQLTypeMiddleware::class    => Types\WebonyxGraphQLTypeMiddleware::PRIORITY,
-            Types\GraphQLTypeMiddleware::class           => Types\GraphQLTypeMiddleware::PRIORITY,
+            Types\EnumTypeMiddleware::class => Types\EnumTypeMiddleware::PRIORITY,
+            Types\WebonyxGraphQLTypeMiddleware::class => Types\WebonyxGraphQLTypeMiddleware::PRIORITY,
+            Types\GraphQLTypeMiddleware::class => Types\GraphQLTypeMiddleware::PRIORITY,
             Types\AttributedGraphQLTypeMiddleware::class => Types\AttributedGraphQLTypeMiddleware::PRIORITY,
         ],
 
         'objectFieldResolverMiddlewares' => [
-            Objects\QueryFieldByReflectionMethodMiddleware::class      => Objects\QueryFieldByReflectionMethodMiddleware::PRIORITY,
-            Objects\MutationFieldByReflectionMethodMiddleware::class   => Objects\MutationFieldByReflectionMethodMiddleware::PRIORITY,
+            Objects\QueryFieldByReflectionMethodMiddleware::class => Objects\QueryFieldByReflectionMethodMiddleware::PRIORITY,
+            Objects\MutationFieldByReflectionMethodMiddleware::class => Objects\MutationFieldByReflectionMethodMiddleware::PRIORITY,
             Objects\AdditionalFieldByReflectionMethodMiddleware::class => Objects\AdditionalFieldByReflectionMethodMiddleware::PRIORITY,
-            Objects\InterfaceFieldByReflectionMethodMiddleware::class  => Objects\InterfaceFieldByReflectionMethodMiddleware::PRIORITY,
-            Objects\ObjectFieldByReflectionMethodMiddleware::class     => Objects\ObjectFieldByReflectionMethodMiddleware::PRIORITY,
-            Objects\ObjectFieldByReflectionPropertyMiddleware::class   => Objects\ObjectFieldByReflectionPropertyMiddleware::PRIORITY,
-            Objects\ObjectFieldMiddleware::class                       => Objects\ObjectFieldMiddleware::PRIORITY,
-            Objects\WebonyxObjectFieldMiddleware::class                => Objects\WebonyxObjectFieldMiddleware::PRIORITY,
+            Objects\InterfaceFieldByReflectionMethodMiddleware::class => Objects\InterfaceFieldByReflectionMethodMiddleware::PRIORITY,
+            Objects\ObjectFieldByReflectionMethodMiddleware::class => Objects\ObjectFieldByReflectionMethodMiddleware::PRIORITY,
+            Objects\ObjectFieldByReflectionPropertyMiddleware::class => Objects\ObjectFieldByReflectionPropertyMiddleware::PRIORITY,
+            Objects\ObjectFieldMiddleware::class => Objects\ObjectFieldMiddleware::PRIORITY,
+            Objects\WebonyxObjectFieldMiddleware::class => Objects\WebonyxObjectFieldMiddleware::PRIORITY,
         ],
 
         'inputObjectFieldResolverMiddlewares' => [
-            Inputs\ReflectionPropertyMiddleware::class      => Inputs\ReflectionPropertyMiddleware::PRIORITY,
-            Inputs\ReflectionMethodMiddleware::class        => Inputs\ReflectionMethodMiddleware::PRIORITY,
-            Inputs\InputObjectFieldMiddleware::class        => Inputs\InputObjectFieldMiddleware::PRIORITY,
+            Inputs\ReflectionPropertyMiddleware::class => Inputs\ReflectionPropertyMiddleware::PRIORITY,
+            Inputs\ReflectionMethodMiddleware::class => Inputs\ReflectionMethodMiddleware::PRIORITY,
+            Inputs\InputObjectFieldMiddleware::class => Inputs\InputObjectFieldMiddleware::PRIORITY,
             Inputs\WebonyxInputObjectFieldMiddleware::class => Inputs\WebonyxInputObjectFieldMiddleware::PRIORITY,
         ],
 
         'argumentResolverMiddlewares' => [
-            Argument\ReflectionParameterMiddleware::class   => Argument\ReflectionParameterMiddleware::PRIORITY,
-            Argument\ArgumentMiddleware::class              => Argument\ArgumentMiddleware::PRIORITY,
+            Argument\ReflectionParameterMiddleware::class => Argument\ReflectionParameterMiddleware::PRIORITY,
+            Argument\ArgumentMiddleware::class => Argument\ArgumentMiddleware::PRIORITY,
             Argument\ArgumentConfigurationMiddleware::class => Argument\ArgumentConfigurationMiddleware::PRIORITY,
         ],
 
@@ -78,6 +80,9 @@ final class GraphQLConfig extends InjectableConfig
         return $this->config['mutationType'];
     }
 
+    /**
+     * @return class-string|null
+     */
     public function getRootValue(): ?string
     {
         return $this->config['rootValue'];
@@ -89,6 +94,11 @@ final class GraphQLConfig extends InjectableConfig
     public function getContext(): ?string
     {
         return $this->config['context'] ?? null;
+    }
+
+    public function getDebugFlag(): int
+    {
+        return $this->config['debugFlag'] ?? DebugFlag::INCLUDE_DEBUG_MESSAGE;
     }
 
     /**

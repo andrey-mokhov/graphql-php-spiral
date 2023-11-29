@@ -14,6 +14,7 @@ use Andi\GraphQL\ObjectFieldResolver\ObjectFieldResolver;
 use Andi\GraphQL\ObjectFieldResolver\ObjectFieldResolverInterface;
 use Andi\GraphQL\Spiral\Command\ConfigCommand;
 use Andi\GraphQL\Spiral\Config\GraphQLConfig;
+use Andi\GraphQL\Spiral\Common\ValueResolver;
 use Andi\GraphQL\Spiral\Listener\AdditionalFieldListener;
 use Andi\GraphQL\Spiral\Listener\AttributedMutationFieldListener;
 use Andi\GraphQL\Spiral\Listener\AttributedQueryFieldListener;
@@ -40,6 +41,8 @@ use Spiral\Boot\EnvironmentInterface;
 use Spiral\Bootloader\Http\HttpBootloader;
 use Spiral\Config\ConfiguratorInterface;
 use Spiral\Console\Bootloader\ConsoleBootloader;
+use Spiral\Core\InvokerInterface;
+use Spiral\Core\ScopeInterface;
 use Spiral\Tokenizer\TokenizerListenerRegistryInterface;
 
 final class GraphQLBootloader extends Bootloader
@@ -173,14 +176,36 @@ final class GraphQLBootloader extends Bootloader
         return new StandardServer($config);
     }
 
-    private function buildServerConfig(Schema $schema): ServerConfig
-    {
-        $config = (new ServerConfig())
-            ->setSchema($schema);
+    private function buildServerConfig(
+        Schema $schema,
+        GraphQLConfig $config,
+        ContainerInterface $container,
+        ScopeInterface $scope,
+        InvokerInterface $invoker,
+    ): ServerConfig {
+        $serverConfig = (new ServerConfig())->setSchema($schema);
 
-        $config->setDebugFlag();
+        if ($rootValueName = $config->getRootValue()) {
+            $rootValue = $container->get($rootValueName);
+            $rootValueFn = is_callable($rootValue)
+                ? $rootValue
+                : static fn () => $rootValue;
 
-        return $config;
+            $serverConfig->setRootValue(new ValueResolver($scope, $invoker, $rootValueFn));
+        }
+
+        if ($contextName = $config->getContext()) {
+            $context = $container->get($contextName);
+            $contextFn = is_callable($context)
+                ? $context
+                : static fn () => $context;
+
+            $serverConfig->setContext(new ValueResolver($scope, $invoker, $contextFn));
+        }
+
+        $serverConfig->setDebugFlag($config->getDebugFlag());
+
+        return $serverConfig;
     }
 
     private function buildSchema(SchemaConfig $config): Schema
