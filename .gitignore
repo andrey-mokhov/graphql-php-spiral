@@ -1,3 +1,13 @@
 .idea
+.DS_Store
 .phpunit.result.cache
 .phpunit.cache
+composer.lock
+vendor
+build
+tests/dirs
+!tests/dirs/app/.gitkeeper
+!tests/dirs/runtime/cache/.gitkeeper
+phpunit.xml
+psalm.xml
+psalm-cache
