@@ -44,6 +44,7 @@ final class TypeLoaderListener implements TokenizationListenerInterface
 
         try {
             $type = $this->typeResolver->resolve($className);
+            assert($type instanceof Webonyx\NamedType);
             $this->typeRegistry->register($type, $className);
         } catch (CantResolveGraphQLTypeException $e) {
             $this->reporter->report($e);
