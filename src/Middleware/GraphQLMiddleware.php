@@ -30,7 +30,9 @@ final class GraphQLMiddleware implements MiddlewareInterface, SingletonInterface
             $response = $this->responseFactory->createResponse();
             $stream = $this->streamFactory->createStream();
 
-            return $this->server->processPsrRequest($request, $response, $stream);
+            $result = $this->server->processPsrRequest($request, $response, $stream);
+            assert($result instanceof ResponseInterface);
+            return $result;
         }
 
         return $handler->handle($request);
