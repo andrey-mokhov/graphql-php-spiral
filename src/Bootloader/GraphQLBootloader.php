@@ -29,6 +29,7 @@ use Andi\GraphQL\TypeResolver\TypeResolver;
 use Andi\GraphQL\TypeResolver\TypeResolverInterface;
 use GraphQL\Server\ServerConfig;
 use GraphQL\Server\StandardServer;
+use GraphQL\Type\Definition as Webonyx;
 use GraphQL\Type\Schema;
 use GraphQL\Type\SchemaConfig;
 use Psr\Container\ContainerInterface;
@@ -122,6 +123,7 @@ final class GraphQLBootloader extends Bootloader
         }
 
         $queryType = $typeResolver->resolve($class);
+        assert($queryType instanceof Webonyx\NamedType);
         $typeRegistry->register($queryType, $class);
     }
 
@@ -138,8 +140,9 @@ final class GraphQLBootloader extends Bootloader
             $class = MutationType::class;
         }
 
-        $queryType = $typeResolver->resolve($class);
-        $typeRegistry->register($queryType, $class);
+        $mutationType = $typeResolver->resolve($class);
+        assert($mutationType instanceof Webonyx\NamedType);
+        $typeRegistry->register($mutationType, $class);
     }
 
     private function registerAdditionalTypes(
@@ -154,7 +157,7 @@ final class GraphQLBootloader extends Bootloader
             }
 
             $type = $typeResolver->resolve($name);
-
+            assert($type instanceof Webonyx\NamedType);
             $typeRegistry->register($type, ...$aliases);
         }
     }

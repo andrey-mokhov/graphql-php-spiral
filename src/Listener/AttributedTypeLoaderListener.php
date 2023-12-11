@@ -12,6 +12,7 @@ use Andi\GraphQL\Attribute\ObjectType;
 use Andi\GraphQL\Exception\CantResolveGraphQLTypeException;
 use Andi\GraphQL\TypeRegistryInterface;
 use Andi\GraphQL\TypeResolver\TypeResolverInterface;
+use GraphQL\Type\Definition\NamedType;
 use ReflectionClass;
 use Spiral\Attributes\ReaderInterface;
 use Spiral\Tokenizer\Attribute\TargetAttribute;
@@ -45,6 +46,7 @@ final class AttributedTypeLoaderListener implements TokenizationListenerInterfac
         $typeName = (string) $type;
 
         if (! $this->typeRegistry->has($typeName)) {
+            assert($type instanceof NamedType);
             $this->typeRegistry->register($type, $class->getName());
         }
     }
