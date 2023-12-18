@@ -6,6 +6,7 @@ namespace Andi\Tests\GraphQL\Spiral\Feature\Command;
 
 use Andi\GraphQL\Spiral\Bootloader\GraphQLBootloader;
 use Andi\GraphQL\Spiral\Command\ConfigCommand;
+use Andi\GraphQL\Spiral\Common\SchemaWarmupper;
 use Andi\GraphQL\Spiral\Config\GraphQLConfig;
 use Andi\GraphQL\Spiral\Listener\AbstractAdditionalFieldListener;
 use Andi\GraphQL\Spiral\Listener\AdditionalFieldListener;
@@ -30,6 +31,7 @@ use Spiral\Testing\TestCase;
 #[UsesClass(MutationFieldListener::class)]
 #[UsesClass(QueryFieldListener::class)]
 #[UsesClass(TypeLoaderListener::class)]
+#[UsesClass(SchemaWarmupper::class)]
 final class ConfigCommandTest extends TestCase
 {
     public function rootDirectory(): string

@@ -51,7 +51,10 @@ final class SchemaWarmupper
             return;
         }
         assert($type instanceof Webonyx\NamedType);
-
+        /**
+         * @psalm-suppress NoInterfaceProperties
+         * @psalm-suppress UndefinedPropertyFetch
+         */
         $name = $type->name;
         if (isset($allTypes[$name])) {
             return;

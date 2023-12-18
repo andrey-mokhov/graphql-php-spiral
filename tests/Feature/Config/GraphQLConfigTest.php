@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Andi\Tests\GraphQL\Spiral\Feature\Config;
 
 use Andi\GraphQL\Spiral\Bootloader\GraphQLBootloader;
+use Andi\GraphQL\Spiral\Common\SchemaWarmupper;
 use Andi\GraphQL\Spiral\Config\GraphQLConfig;
 use Andi\GraphQL\Spiral\Listener\AbstractAdditionalFieldListener;
 use Andi\GraphQL\Spiral\Listener\AdditionalFieldListener;
@@ -33,6 +34,7 @@ use Spiral\Testing\TestCase;
 #[UsesClass(QueryFieldListener::class)]
 #[UsesClass(MutationFieldListener::class)]
 #[UsesClass(TypeLoaderListener::class)]
+#[UsesClass(SchemaWarmupper::class)]
 final class GraphQLConfigTest extends TestCase
 {
     private GraphQLConfig $config;
