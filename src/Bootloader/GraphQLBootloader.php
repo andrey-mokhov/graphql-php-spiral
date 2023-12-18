@@ -11,6 +11,7 @@ use Andi\GraphQL\InputObjectFieldResolver\InputObjectFieldResolverInterface;
 use Andi\GraphQL\ObjectFieldResolver\ObjectFieldResolver;
 use Andi\GraphQL\ObjectFieldResolver\ObjectFieldResolverInterface;
 use Andi\GraphQL\Spiral\Command\ConfigCommand;
+use Andi\GraphQL\Spiral\Common\SchemaWarmupper;
 use Andi\GraphQL\Spiral\Config\GraphQLConfig;
 use Andi\GraphQL\Spiral\Common\ValueResolver;
 use Andi\GraphQL\Spiral\Listener\AdditionalFieldListener;
@@ -33,6 +34,7 @@ use GraphQL\Type\Definition as Webonyx;
 use GraphQL\Type\Schema;
 use GraphQL\Type\SchemaConfig;
 use Psr\Container\ContainerInterface;
+use Spiral\Boot\AbstractKernel;
 use Spiral\Boot\Bootloader\Bootloader;
 use Spiral\Boot\EnvironmentInterface;
 use Spiral\Bootloader\Http\HttpBootloader;
@@ -70,6 +72,7 @@ final class GraphQLBootloader extends Bootloader
     }
 
     public function init(
+        AbstractKernel $kernel,
         EnvironmentInterface $env,
         HttpBootloader $http,
         ConsoleBootloader $console,
@@ -81,6 +84,9 @@ final class GraphQLBootloader extends Bootloader
         $http->addMiddleware(GraphQLMiddleware::class);
 
         $console->addCommand(ConfigCommand::class);
+        $kernel->bootstrapped(static function (Schema $schema): void {
+            SchemaWarmupper::warmup($schema);
+        });
     }
 
     public function boot(
