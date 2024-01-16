@@ -36,7 +36,7 @@ final class ConfigCommandTest extends TestCase
 {
     public function rootDirectory(): string
     {
-        return dirname(__DIR__, 2) . '/dirs';
+        return dirname(__DIR__, 2) . '/tmp-dirs';
     }
 
     public function defineBootloaders(): array

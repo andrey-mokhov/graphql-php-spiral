@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Andi\GraphQL\Spiral\Listener;
 
 use Andi\GraphQL\Field\QueryFieldInterface;
+use Andi\GraphQL\Spiral\Config\GraphQLConfig;
 use Andi\GraphQL\Type\DynamicObjectTypeInterface;
 use Andi\GraphQL\TypeRegistryInterface;
 use Psr\Container\ContainerInterface;
@@ -20,6 +21,7 @@ final class QueryFieldListener implements TokenizationListenerInterface
     public function __construct(
         private readonly ContainerInterface $container,
         private readonly TypeRegistryInterface $typeRegistry,
+        private readonly GraphQLConfig $config,
     ) {
     }
 
@@ -34,13 +36,13 @@ final class QueryFieldListener implements TokenizationListenerInterface
 
     public function finalize(): void
     {
-        $queryType = $this->typeRegistry->get('Query');
-        if (! $queryType instanceof DynamicObjectTypeInterface) {
+        $query = $this->typeRegistry->get($this->config->getQueryType());
+        if (! $query instanceof DynamicObjectTypeInterface) {
             return;
         }
 
         foreach ($this->classes as $class) {
-            $queryType->addAdditionalField($this->container->get($class));
+            $query->addAdditionalField($this->container->get($class));
         }
     }
 }

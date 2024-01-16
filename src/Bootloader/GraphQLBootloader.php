@@ -129,7 +129,7 @@ final class GraphQLBootloader extends Bootloader
         }
 
         $queryType = $typeResolver->resolve($class);
-        assert($queryType instanceof Webonyx\NamedType);
+        \assert($queryType instanceof Webonyx\NamedType);
         $typeRegistry->register($queryType, $class);
     }
 
@@ -147,7 +147,7 @@ final class GraphQLBootloader extends Bootloader
         }
 
         $mutationType = $typeResolver->resolve($class);
-        assert($mutationType instanceof Webonyx\NamedType);
+        \assert($mutationType instanceof Webonyx\NamedType);
         $typeRegistry->register($mutationType, $class);
     }
 
@@ -158,13 +158,13 @@ final class GraphQLBootloader extends Bootloader
     ): void {
         foreach ($types as $name => $aliases) {
             $aliases = (array) $aliases;
-            if (is_int($name)) {
-                $name = reset($aliases);
+            if (\is_int($name)) {
+                $name = \array_shift($aliases);
             }
 
             $type = $typeResolver->resolve($name);
-            assert($type instanceof Webonyx\NamedType);
-            $typeRegistry->register($type, ...$aliases);
+            \assert($type instanceof Webonyx\NamedType);
+            $typeRegistry->register($type, $name, ...$aliases);
         }
     }
 
@@ -184,7 +184,7 @@ final class GraphQLBootloader extends Bootloader
 
         if ($rootValueName = $config->getRootValue()) {
             $rootValue = $container->get($rootValueName);
-            $rootValueFn = is_callable($rootValue)
+            $rootValueFn = \is_callable($rootValue)
                 ? $rootValue
                 : static fn () => $rootValue;
 
@@ -193,7 +193,7 @@ final class GraphQLBootloader extends Bootloader
 
         if ($contextName = $config->getContext()) {
             $context = $container->get($contextName);
-            $contextFn = is_callable($context)
+            $contextFn = \is_callable($context)
                 ? $context
                 : static fn () => $context;
 
