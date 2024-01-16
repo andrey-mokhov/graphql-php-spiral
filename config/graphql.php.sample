@@ -9,6 +9,11 @@ use Andi\GraphQL\Spiral\Config\GraphQLConfig;
 use Andi\GraphQL\TypeResolver\Middleware as Types;
 
 return [
+    'scope' => [
+        'public' => [
+            'types'
+        ],
+    ],
     'url' => getenv('GRAPHQL_URL') ?: '/api/graphql',
     'queryType' => GraphQLConfig::DEFAULT_QUERY_TYPE,
     'mutationType' => null,

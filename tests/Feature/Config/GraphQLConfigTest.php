@@ -83,4 +83,10 @@ final class GraphQLConfigTest extends TestCase
     {
         self::assertSame('/url-via-env', $this->config->getUrl());
     }
+
+    #[Config('graphql.url', '/url-via-config')]
+    public function testUrlViaConfig(): void
+    {
+        self::assertSame('/url-via-config', $this->config->getUrl());
+    }
 }

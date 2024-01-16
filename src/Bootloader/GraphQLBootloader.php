@@ -81,6 +81,7 @@ final class GraphQLBootloader extends Bootloader
             'url' => $env->get('GRAPHQL_URL', '/api/graphql'),
         ]);
 
+        /** @todo remove global middleware to config */
         $http->addMiddleware(GraphQLMiddleware::class);
 
         $console->addCommand(ConfigCommand::class);
