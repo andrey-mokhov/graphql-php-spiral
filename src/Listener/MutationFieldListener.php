@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Andi\GraphQL\Spiral\Listener;
 
 use Andi\GraphQL\Field\MutationFieldInterface;
+use Andi\GraphQL\Spiral\Config\GraphQLConfig;
 use Andi\GraphQL\Type\DynamicObjectTypeInterface;
 use Andi\GraphQL\TypeRegistryInterface;
 use Psr\Container\ContainerInterface;
@@ -20,6 +21,7 @@ final class MutationFieldListener implements TokenizationListenerInterface
     public function __construct(
         private readonly ContainerInterface $container,
         private readonly TypeRegistryInterface $typeRegistry,
+        private readonly GraphQLConfig $config,
     ) {
     }
 
@@ -34,17 +36,18 @@ final class MutationFieldListener implements TokenizationListenerInterface
 
     public function finalize(): void
     {
-        if (! $this->typeRegistry->has('Mutation')) {
-            return;
-        }
+        $type = $this->config->getMutationType();
 
-        $mutationType = $this->typeRegistry->get('Mutation');
-        if (! $mutationType instanceof DynamicObjectTypeInterface) {
+        $mutation = null !== $type && $this->typeRegistry->has($type)
+            ? $this->typeRegistry->get($type)
+            : null;
+
+        if (! $mutation instanceof DynamicObjectTypeInterface) {
             return;
         }
 
         foreach ($this->classes as $class) {
-            $mutationType->addAdditionalField($this->container->get($class));
+            $mutation->addAdditionalField($this->container->get($class));
         }
     }
 }

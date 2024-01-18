@@ -46,7 +46,7 @@ final class AttributedTypeLoaderListener implements TokenizationListenerInterfac
         $typeName = (string) $type;
 
         if (! $this->typeRegistry->has($typeName)) {
-            assert($type instanceof NamedType);
+            \assert($type instanceof NamedType);
             $this->typeRegistry->register($type, $class->getName());
         }
     }

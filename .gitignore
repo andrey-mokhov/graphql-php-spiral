@@ -5,9 +5,11 @@
 composer.lock
 vendor
 build
-tests/dirs
-!tests/dirs/app/.gitkeeper
-!tests/dirs/runtime/cache/.gitkeeper
+tests/dirs/runtime
+tests/tmp-dirs
+!tests/dirs/runtime/cache/.gitkeep
+!tests/tmp-dirs/app/.gitkeep
+!tests/tmp-dirs/runtime/cache/.gitkeep
 phpunit.xml
 psalm.xml
 psalm-cache

@@ -14,7 +14,7 @@ final class SchemaWarmupper
         $allTypes = [];
 
         $types = $schema->getConfig()->getTypes();
-        if (is_callable($types)) {
+        if (\is_callable($types)) {
             $types = $types();
         }
 
@@ -50,7 +50,7 @@ final class SchemaWarmupper
 
             return;
         }
-        assert($type instanceof Webonyx\NamedType);
+        \assert($type instanceof Webonyx\NamedType);
         /**
          * @psalm-suppress NoInterfaceProperties
          * @psalm-suppress UndefinedPropertyFetch
@@ -64,7 +64,7 @@ final class SchemaWarmupper
 
         if ($type instanceof Webonyx\EnumType) {
             $enumValues = $type->getValues();
-            if (is_callable($type->config['values'])) {
+            if (\is_callable($type->config['values'])) {
                 $values = [];
                 foreach ($enumValues as $value) {
                     $values[$value->name] = [
@@ -99,7 +99,7 @@ final class SchemaWarmupper
             foreach ($interfaces as $interface) {
                 self::warmupType($interface, $allTypes);
             }
-            assert($type instanceof Webonyx\ObjectType || $type instanceof Webonyx\InterfaceType);
+            \assert($type instanceof Webonyx\ObjectType || $type instanceof Webonyx\InterfaceType);
             $type->config['interfaces'] = $interfaces;
         }
 
@@ -112,7 +112,7 @@ final class SchemaWarmupper
                 self::warmupType($field->getType(), $allTypes);
             }
 
-            assert($type instanceof Webonyx\ObjectType || $type instanceof Webonyx\InterfaceType);
+            \assert($type instanceof Webonyx\ObjectType || $type instanceof Webonyx\InterfaceType);
             $type->config['fields'] = $fields;
         }
     }
