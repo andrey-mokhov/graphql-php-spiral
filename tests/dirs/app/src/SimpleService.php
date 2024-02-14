@@ -14,8 +14,8 @@ use Andi\GraphQL\Attribute\QueryField;
  */
 final class SimpleService
 {
-    #[QueryField(name: 'echo')]
-    #[MutationField(name: 'echo')]
+    #[QueryField(name: 'queryEcho')]
+    #[MutationField(name: 'mutationEcho')]
     public function echoMessage(#[Argument] string $message): string
     {
         return 'echo: ' . $message;

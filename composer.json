@@ -10,7 +10,7 @@
     "type": "library",
     "require": {
         "php": "^8.1",
-        "andi-lab/graphql-php": "^1.0",
+        "andi-lab/graphql-php": "^1.0.1",
         "spiral/framework": "^3.8.4"
     },
     "license": "MIT",

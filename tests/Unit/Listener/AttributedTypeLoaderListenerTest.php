@@ -12,7 +12,6 @@ use Andi\GraphQL\ObjectFieldResolver\ObjectFieldResolverInterface;
 use Andi\GraphQL\Spiral\Listener\AttributedTypeLoaderListener;
 use Andi\GraphQL\TypeRegistry;
 use Andi\GraphQL\TypeRegistryInterface;
-use Andi\GraphQL\TypeResolver\CantResolveGraphQLTypeResolver;
 use Andi\GraphQL\TypeResolver\Middleware\AttributedGraphQLTypeMiddleware;
 use Andi\GraphQL\TypeResolver\Middleware\EnumTypeMiddleware;
 use Andi\GraphQL\TypeResolver\TypeResolver;
@@ -40,7 +39,9 @@ final class AttributedTypeLoaderListenerTest extends TestCase
         $container = new Container();
         $reader = new NativeAttributeReader();
 
-        $this->typeRegistry = new TypeRegistry();
+        $typeRegistry = $this->typeRegistry = new TypeRegistry();
+
+        $container->bindSingleton(TypeRegistryInterface::class, static fn () => $typeRegistry);
 
         $typeResolver = new TypeResolver();
         $typeResolver->pipe(new EnumTypeMiddleware($reader));
