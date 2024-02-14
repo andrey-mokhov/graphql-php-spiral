@@ -5,16 +5,15 @@ declare(strict_types=1);
 namespace Andi\GraphQL\Spiral\Listener;
 
 use Andi\GraphQL\Attribute\AbstractField;
+use Andi\GraphQL\Common\ReflectionMethodWithAttribute;
 use Andi\GraphQL\TypeRegistryInterface;
-use ReflectionClass;
-use ReflectionMethod;
 use Spiral\Attributes\ReaderInterface;
 use Spiral\Tokenizer\TokenizationListenerInterface;
 
 abstract class AbstractAdditionalFieldListener implements TokenizationListenerInterface
 {
     /**
-     * @var array<ReflectionMethod>
+     * @var array<ReflectionMethodWithAttribute>
      */
     protected array $methods = [];
 
@@ -27,7 +26,7 @@ abstract class AbstractAdditionalFieldListener implements TokenizationListenerIn
     ) {
     }
 
-    public function listen(ReflectionClass $class): void
+    public function listen(\ReflectionClass $class): void
     {
         if ($class->isAbstract() || $class->isEnum() || $class->isTrait()) {
             return;
@@ -38,8 +37,8 @@ abstract class AbstractAdditionalFieldListener implements TokenizationListenerIn
                 continue;
             }
 
-            if (null !== $this->reader->firstFunctionMetadata($method, $this->attribute)) {
-                $this->methods[] = $method;
+            if ($attribute = $this->reader->firstFunctionMetadata($method, $this->attribute)) {
+                $this->methods[] = new ReflectionMethodWithAttribute($method, $attribute);
             }
         }
     }

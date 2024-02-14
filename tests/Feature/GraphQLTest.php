@@ -113,14 +113,14 @@ final class GraphQLTest extends TestCase
         yield 'query echo' => [
             'expected' => [
                 'data' => [
-                    'echo' => 'echo: hello',
+                    'queryEcho' => 'echo: hello',
                 ],
             ],
             'data' => [
                 'operationName' => null,
                 'variables' => new \stdClass(),
                 'query' => <<<'QUERY'
-                    {echo(message:"hello")}
+                    {queryEcho(message:"hello")}
                     QUERY,
             ],
         ];
@@ -135,7 +135,7 @@ final class GraphQLTest extends TestCase
                 'operationName' => null,
                 'variables' => ['mess' => 'foo'],
                 'query' => <<<'QUERY'
-                    mutation tst($mess: String!) {tmp: echo(message:$mess)}
+                    mutation tst($mess: String!) {tmp: mutationEcho(message:$mess)}
                     QUERY,
             ],
         ];
